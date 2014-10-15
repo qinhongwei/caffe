@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "caffe/caffe.hpp"
+#include "caffe/util/basic_visualizer.hpp"
+#include "caffe/util/inspection_visualizer.hpp"
 
 using caffe::Blob;
 using caffe::Caffe;
@@ -29,6 +31,7 @@ DEFINE_string(weights, "",
     "Cannot be set simultaneously with snapshot.");
 DEFINE_int32(iterations, 50,
     "The number of iterations to run.");
+DEFINE_string(log, "", "File to log LogRecord protobufs to.");
 
 // A simple registry for caffe commands.
 typedef int (*BrewFunction)();
@@ -107,6 +110,14 @@ int train() {
   LOG(INFO) << "Starting Optimization";
   shared_ptr<caffe::Solver<float> >
     solver(caffe::GetSolver<float>(solver_param));
+
+  if (!FLAGS_log.empty()) {
+    solver->SetLogFilename(FLAGS_log);
+    solver->AddVisualizer(shared_ptr<caffe::Visualizer<float> >(
+        new caffe::BasicVisualizer<float>()));
+    solver->AddVisualizer(shared_ptr<caffe::Visualizer<float> >(
+        new caffe::InspectionVisualizer<float>()));
+  }
 
   if (FLAGS_snapshot.size()) {
     LOG(INFO) << "Resuming from " << FLAGS_snapshot;

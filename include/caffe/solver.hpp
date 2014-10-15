@@ -1,12 +1,18 @@
 #ifndef CAFFE_OPTIMIZATION_SOLVER_HPP_
 #define CAFFE_OPTIMIZATION_SOLVER_HPP_
 
+#include <fstream>  // NOLINT(readability/streams)
+#include <ostream>  // NOLINT(readability/streams)
 #include <string>
 #include <vector>
 
 #include "caffe/net.hpp"
+#include "caffe/util/visualizer.hpp"
 
 namespace caffe {
+
+using std::ofstream;
+using std::ostream;
 
 /**
  * @brief An interface for classes that perform optimization on Net%s.
@@ -33,6 +39,14 @@ class Solver {
   }
   int iter() { return iter_; }
 
+  void SetLogFilename(const string& log_filename) {
+    log_.reset(new ofstream(log_filename.c_str(), ios::binary));
+  }
+
+  void AddVisualizer(shared_ptr<Visualizer<Dtype> > visualizer) {
+    visualizers_.push_back(visualizer);
+  }
+
  protected:
   // PreSolve is run before any solving iteration starts, allowing one to
   // put up some scaffold.
@@ -55,11 +69,33 @@ class Solver {
   virtual void RestoreSolverState(const SolverState& state) = 0;
   void DisplayOutputBlobs(const int net_id);
 
+  virtual void Log(const LogRecord& record) {
+    if (!log_) {
+      return;
+    }
+    string serialized;
+    record.SerializeToString(&serialized);
+    uint64_t length = serialized.size();
+    log_->write(reinterpret_cast<const char*>(&length), sizeof(length));
+    log_->write(serialized.c_str(), serialized.size());
+    log_->flush();
+  }
+
+  void LogLoss(const string& name, Blob<Dtype>* result,
+      uint64_t timestamp, int iteration);
+  void LogLoss(const string& name, Dtype result, uint64_t timestamp,
+      int iteration);
+  void LogScore(const string& name, Dtype result, uint64_t timestamp,
+      int iteration);
+
   SolverParameter param_;
   int iter_;
   int current_step_;
   shared_ptr<Net<Dtype> > net_;
   vector<shared_ptr<Net<Dtype> > > test_nets_;
+
+  shared_ptr<ostream> log_;
+  vector<shared_ptr<Visualizer<Dtype> > > visualizers_;
 
   DISABLE_COPY_AND_ASSIGN(Solver);
 };

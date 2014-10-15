@@ -208,6 +208,7 @@ void Solver<Dtype>::Solve(const char* resume_file) {
       losses[idx] = loss;
     }
     if (display) {
+      uint64_t timestamp = time(0);
       LOG(INFO) << "Iteration " << iter_ << ", loss = " << smoothed_loss;
       const vector<Blob<Dtype>*>& result = net_->output_blobs();
       int score_index = 0;
@@ -217,6 +218,9 @@ void Solver<Dtype>::Solve(const char* resume_file) {
             net_->blob_names()[net_->output_blob_indices()[j]];
         const Dtype loss_weight =
             net_->blob_loss_weights()[net_->output_blob_indices()[j]];
+
+        LogLoss(output_name, result.at(j), timestamp, iter_);
+
         for (int k = 0; k < result[j]->count(); ++k) {
           ostringstream loss_msg_stream;
           if (loss_weight) {
@@ -227,6 +231,21 @@ void Solver<Dtype>::Solve(const char* resume_file) {
               << score_index++ << ": " << output_name << " = "
               << result_vec[k] << loss_msg_stream.str();
         }
+      }
+    }
+
+    const bool visualize = param_.visualize()
+        && iter_ % param_.visualize() == 0;
+    if (visualize) {
+      typedef typename vector<shared_ptr<Visualizer<Dtype> > >::const_iterator
+          VizIter;
+      for (VizIter visualizer = visualizers_.begin();
+          visualizer != visualizers_.end(); ++visualizer) {
+        LogRecord log_record;
+        log_record.set_iteration(this->iter_);
+        log_record.set_timestamp(time(0));
+        (*visualizer)->CreateLogRecord(net_, &log_record);
+        Log(log_record);
       }
     }
 
@@ -263,6 +282,7 @@ void Solver<Dtype>::TestAll() {
 
 template <typename Dtype>
 void Solver<Dtype>::Test(const int test_net_id) {
+  uint64_t timestamp = time(0);
   LOG(INFO) << "Iteration " << iter_
             << ", Testing net (#" << test_net_id << ")";
   // We need to set phase to test before running.
@@ -302,6 +322,10 @@ void Solver<Dtype>::Test(const int test_net_id) {
   if (param_.test_compute_loss()) {
     loss /= param_.test_iter(test_net_id);
     LOG(INFO) << "Test loss: " << loss;
+
+    stringstream ss;
+    ss << test_net_id << "_test";
+    LogLoss(ss.str(), loss, timestamp, iter_);
   }
   for (int i = 0; i < test_score.size(); ++i) {
     const int output_blob_index =
@@ -316,6 +340,10 @@ void Solver<Dtype>::Test(const int test_net_id) {
     }
     LOG(INFO) << "    Test net output #" << i << ": " << output_name << " = "
         << mean_score << loss_msg_stream.str();
+
+    stringstream name;
+    name << output_name << "-" << test_net_id << "-test";
+    LogScore(name.str(), mean_score, timestamp, iter_);
   }
   Caffe::set_phase(Caffe::TRAIN);
 }
@@ -357,6 +385,58 @@ void Solver<Dtype>::Restore(const char* state_file) {
   iter_ = state.iter();
   current_step_ = state.current_step();
   RestoreSolverState(state);
+}
+
+template <typename Dtype>
+void Solver<Dtype>::LogLoss(const string& name,
+    Blob<Dtype>* result, uint64_t timestamp, int iteration) {
+  LogRecord record;
+  record.set_type(LogRecord::LOSS);
+  record.set_timestamp(timestamp);
+  record.set_iteration(iteration);
+
+  const Dtype* result_vec = result->cpu_data();
+
+  LossRecord* loss_record = record.MutableExtension(LossRecord::parent);
+  loss_record->set_name(name);
+
+  for (int k = 0; k < result->count(); ++k) {
+    loss_record->add_loss(result_vec[k]);
+  }
+
+  Log(record);
+}
+
+template <typename Dtype>
+void Solver<Dtype>::LogLoss(const string& name, Dtype result,
+    uint64_t timestamp, int iteration) {
+  LogRecord record;
+  record.set_type(LogRecord::LOSS);
+  record.set_timestamp(timestamp);
+  record.set_iteration(iteration);
+
+  LossRecord* loss_record = record.MutableExtension(LossRecord::parent);
+  loss_record->set_name(name);
+
+  loss_record->add_loss(result);
+
+  Log(record);
+}
+
+template <typename Dtype>
+void Solver<Dtype>::LogScore(const string& name, Dtype result,
+    uint64_t timestamp, int iteration) {
+  LogRecord record;
+  record.set_type(LogRecord::SCORE);
+  record.set_timestamp(timestamp);
+  record.set_iteration(iteration);
+
+  ScoreRecord* score_record = record.MutableExtension(ScoreRecord::parent);
+  score_record->set_name(name);
+
+  score_record->set_score(result);
+
+  Log(record);
 }
 
 

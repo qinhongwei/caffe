@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container" id="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="loss">
+            <h3>Loss</h3>
+            <svg></svg>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="scores">
+            <h3>Scores</h3>
+            <svg></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js"></script>
+
+    <script type="text/javascript">
+    d3.json('loss', function(data) {
+      nv.addGraph(function() {
+        var chart = nv.models.lineChart()
+                      .margin({left: 100})
+                      .useInteractiveGuideline(true)
+                      .showLegend(true)
+                      .showYAxis(true)
+                      .showXAxis(true)
+        ;
+
+        var timeFormatter = d3.time.format('%x %X');
+        chart.xAxis
+            .axisLabel('Time')
+            .tickFormat(function(d) {
+              return timeFormatter(new Date(1000 * d));
+            });
+
+        chart.yAxis
+            .axisLabel('Loss')
+            .tickFormat(d3.format('.02f'));
+
+        var myLoss = formatLoss(data);
+
+        d3.select('#loss svg')
+            .datum(myLoss)
+            .call(chart);
+
+        nv.utils.windowResize(function() { chart.update() });
+        return chart;
+      });
+
+      function formatLoss(data) {
+        var formattedLoss = {};
+
+        for (var i = 0; i < data.length; i++) {
+          var name = data[i].name;
+          if (!formattedLoss[name]) {
+            formattedLoss[name] = {
+              values: [],
+              key: name,
+            };
+          }
+          formattedLoss[name].values.push({x: data[i].ts, y: data[i].loss[0]});
+        }
+
+        return $.map(formattedLoss, function(value, key) { return value; });
+      }
+    });
+
+    d3.json('scores', function(data) {
+      nv.addGraph(function() {
+        var chart = nv.models.lineChart()
+                      .margin({left: 100})
+                      .useInteractiveGuideline(true)
+                      .showLegend(true)
+                      .showYAxis(true)
+                      .showXAxis(true)
+        ;
+
+        var timeFormatter = d3.time.format('%x %X');
+        chart.xAxis
+            .axisLabel('Time')
+            .tickFormat(function(d) {
+              return timeFormatter(new Date(1000 * d));
+            });
+
+        chart.yAxis
+            .axisLabel('Scores')
+            .tickFormat(d3.format('.02f'));
+
+        var myScores = formatScores(data);
+
+        d3.select('#scores svg')
+            .datum(myScores)
+            .call(chart);
+
+        nv.utils.windowResize(function() { chart.update() });
+        return chart;
+      });
+
+      function formatScores(data) {
+        var formattedScores = {};
+
+        for (var i = 0; i < data.length; i++) {
+          var name = data[i].name;
+          if (!formattedScores[name]) {
+            formattedScores[name] = {
+              values: [],
+              key: name,
+            };
+          }
+          formattedScores[name].values.push({x: data[i].ts, y: data[i].score});
+        }
+
+        return $.map(formattedScores, function(value, key) { return value; });
+      }
+    });
+
+    d3.json('inspection', function(data) {
+      var layers = {};
+      $.each(data, function (datum_index, datum) {
+        var blob_name = datum.name + '-' + datum.idx;
+        if (layers[blob_name] === undefined) {
+          layers[blob_name] = [];
+        }
+        layers[blob_name].push(datum);
+      });
+
+      $.each(layers, function(layer_name, layer) {
+        var container_div = $('#container');
+        var row_div = $('<div id="' + layer_name + '" class="row"></div>');
+        container_div.append($('<hr/>'));
+        container_div.append(row_div);
+        var weight_div = $('<div class="col-md-4"><div id="' + layer_name + '-weight"><h4>' + layer_name + ' weights</h4><svg></svg></div></div>');
+        var grad_div = $('<div class="col-md-4"><div id="' + layer_name + '-grad"><h4>' + layer_name + ' gradients</h4><svg></svg></div></div>');
+        var viz_div = $('<div class="col-md-4"><div><div style="background:url(\'visualization/weights/' + layer_name + '\'); background-size: contain; background-repeat: no-repeat; background-position: center; height: 89px"></div><div style="background:url(\'visualization/activations/' + layer_name + '\'); background-size: contain; background-repeat: no-repeat; background-position: center; height: 89px"></div></div></div>')
+        row_div.append(weight_div);
+        row_div.append(grad_div);
+        row_div.append(viz_div);
+
+        nv.addGraph(function() {
+          var chart = nv.models.lineChart()
+                        .margin({left: 100})
+                        .useInteractiveGuideline(true)
+                        .showLegend(true)
+                        .showYAxis(true)
+                        .showXAxis(true)
+          ;
+
+          var timeFormatter = d3.time.format('%x %X');
+          chart.xAxis
+              .axisLabel('Time')
+              .tickFormat(function(d) {
+                return timeFormatter(new Date(1000 * d));
+              });
+
+          chart.yAxis
+              .axisLabel('Weight')
+              .tickFormat(d3.format('.06f'));
+
+          var myWeight = formatWeight(layer);
+
+          d3.select('#' + layer_name + '-weight svg')
+              .datum(myWeight)
+              .call(chart);
+
+          nv.utils.windowResize(function() { chart.update() });
+          return chart;
+        });
+
+        function formatWeight(data) {
+          var formattedWeight = [
+            {
+              key: '0%',
+              values: []
+            },
+            {
+              key: '15%',
+              values: []
+            },
+            {
+              key: '50%',
+              values: []
+            },
+            {
+              key: '85%',
+              values: []
+            },
+            {
+              key: '100%',
+              values: []
+            },
+          ];
+
+          for (var i = 0; i < data.length; i++) {
+            var name = data[i].name;
+            formattedWeight[0].values.push({x: data[i].ts, y: data[i].w0});
+            formattedWeight[1].values.push({x: data[i].ts, y: data[i].w15});
+            formattedWeight[2].values.push({x: data[i].ts, y: data[i].w50});
+            formattedWeight[3].values.push({x: data[i].ts, y: data[i].w85});
+            formattedWeight[4].values.push({x: data[i].ts, y: data[i].w100});
+          }
+
+          return formattedWeight;
+        }
+
+        nv.addGraph(function() {
+          var chart = nv.models.lineChart()
+                        .margin({left: 100})
+                        .useInteractiveGuideline(true)
+                        .showLegend(true)
+                        .showYAxis(true)
+                        .showXAxis(true)
+          ;
+
+          var timeFormatter = d3.time.format('%x %X');
+          chart.xAxis
+              .axisLabel('Time')
+              .tickFormat(function(d) {
+                return timeFormatter(new Date(1000 * d));
+              });
+
+          chart.yAxis
+              .axisLabel('Gradient')
+              .tickFormat(d3.format('.06f'));
+
+          var myGradient = formatGradient(layer);
+
+          d3.select('#' + layer_name + '-grad svg')
+              .datum(myGradient)
+              .call(chart);
+
+          nv.utils.windowResize(function() { chart.update() });
+          return chart;
+        });
+
+        function formatGradient(data) {
+          var formattedGradient = [
+            {
+              key: '0%',
+              values: []
+            },
+            {
+              key: '15%',
+              values: []
+            },
+            {
+              key: '50%',
+              values: []
+            },
+            {
+              key: '85%',
+              values: []
+            },
+            {
+              key: '100%',
+              values: []
+            },
+          ];
+
+          for (var i = 0; i < data.length; i++) {
+            var name = data[i].name;
+            formattedGradient[0].values.push({x: data[i].ts, y: data[i].g0});
+            formattedGradient[1].values.push({x: data[i].ts, y: data[i].g15});
+            formattedGradient[2].values.push({x: data[i].ts, y: data[i].g50});
+            formattedGradient[3].values.push({x: data[i].ts, y: data[i].g85});
+            formattedGradient[4].values.push({x: data[i].ts, y: data[i].g100});
+          }
+
+          return formattedGradient;
+        }
+      });
+
+    });
+
+    </script>
+  </body>
+</html>
