@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-prefix=train-29-oct
+prefix=train-03-nov
 postfix=finetune
 
 mkdir cache

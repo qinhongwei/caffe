@@ -6,7 +6,7 @@ layers {
   top: "label"
   hdf5_data_param {
     source: "/home/wyang/Code/PE1.41DBN_human_detector/LSP/lsp_test_mean.txt"
-    batch_size: 100
+    batch_size: 128
   }
   include: { phase: TEST }
 }
@@ -15,8 +15,8 @@ layers {
   type: CONVOLUTION
   bottom: "data"
   top: "conv1"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   convolution_param {
@@ -66,8 +66,8 @@ layers {
   type: CONVOLUTION
   bottom: "norm1"
   top: "conv2"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   convolution_param {
@@ -118,8 +118,8 @@ layers {
   type: CONVOLUTION
   bottom: "norm2"
   top: "conv3"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   convolution_param {
@@ -147,8 +147,8 @@ layers {
   type: CONVOLUTION
   bottom: "conv3"
   top: "conv4"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   convolution_param {
@@ -177,8 +177,8 @@ layers {
   type: CONVOLUTION
   bottom: "conv4"
   top: "conv5"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   convolution_param {
@@ -220,8 +220,8 @@ layers {
   type: INNER_PRODUCT
   bottom: "pool5"
   top: "fc6"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   inner_product_param {
@@ -256,8 +256,8 @@ layers {
   type: INNER_PRODUCT
   bottom: "fc6"
   top: "fc7"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   weight_decay: 1
   weight_decay: 0
   inner_product_param {
@@ -292,6 +292,55 @@ layers {
   type: INNER_PRODUCT
   bottom: "fc7"
   top: "fc8"
+  blobs_lr: 0
+  blobs_lr: 0
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 28
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "fc8-loss"
+  type: EUCLIDEAN_LOSS
+  bottom: "fc8"
+  bottom: "label"
+  top: "fc8-loss"
+}
+layers {
+  name: "fc9"
+  type: INNER_PRODUCT
+  bottom: "fc7"
+  top: "fc9"
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "fc10"
+  type: INNER_PRODUCT
+  bottom: "fc9"
+  top: "fc10"
   blobs_lr: 1
   blobs_lr: 2
   weight_decay: 1
@@ -309,17 +358,27 @@ layers {
   }
 }
 layers {
+  name: "eltwise11"
+  type: ELTWISE
+  bottom: "fc8"
+  bottom: "fc10"
+  top: "eltwise11"
+  eltwise_param {
+    operation: SUM
+  }
+}
+layers {
+  name: "eltwise11-loss"
+  type: EUCLIDEAN_LOSS
+  bottom: "eltwise11"
+  bottom: "label"
+  top: "eltwise11-loss"
+}
+layers {
   name: "accuracy"
   type: ACCURACY_REGRESSION
-  bottom: "fc8"
+  bottom: "eltwise11"
   bottom: "label"
   top: "accuracy"
   include: { phase: TEST }
-}
-layers {
-  name: "loss"
-  type: EUCLIDEAN_LOSS
-  bottom: "fc8"
-  bottom: "label"
-  top: "loss"
 }
