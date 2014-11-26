@@ -8,7 +8,7 @@
 *.log
 *.mat
 *.png
-examples/lsp_pose/cache/*
+examples/lsp*
 # Compiled Object files
 *.slo
 *.lo
