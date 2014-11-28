@@ -7,13 +7,13 @@ if ~exist(cache_dir, 'dir')
 end
 
 DEBUG = 0;
-TEST_GT = 0;
+TEST_GT = 1;
 top_k = 5;
 pos_file = '/home/wyang/Code/PE1.41DBN_human_detector/LSP/cache_test_top5/pos.mat';
 
 
 startiter = 1;
-maxiter = 74;
+maxiter = 200;
 stepsize = 1000;
 model_file_idx = (startiter*stepsize:stepsize:maxiter*stepsize);
 
