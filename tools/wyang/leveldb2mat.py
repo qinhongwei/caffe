@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import leveldb
 import feat_helper_pb2
 import numpy as np

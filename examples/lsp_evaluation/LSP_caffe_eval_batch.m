@@ -51,7 +51,7 @@ recompute = true;
 %     end
 % end
 % compute results
-
+system('./../../tools/wyang/leveldb2mat.py');
 if recompute
 for idx = 1:length(model_file_idx)
     fprintf('Processing #%d | ITER: %d\n', idx, model_file_idx(idx));
@@ -59,9 +59,10 @@ for idx = 1:length(model_file_idx)
     ITER = model_file_idx(idx);
     caffe_pred = ['cache/' MATDB '/test_labels_' sprintf('%d', ITER) '.mat'];
     if ~exist(caffe_pred, 'file')
-        mycmd = sprintf('sh extract_test_label.sh %s %s %s %s %d %d %d %d %s',...
+        mycmd = sprintf('sh extract_test_label2.sh %s %s %s %s %d %d %d %d %s',...
             MODELPATH, PROTOTXT, LAYER, LEVELDB, ITER, BATCHSIZE, BATCHNUM, DIM, cache_dir);
         system(mycmd);
+        
     end
     %--------------------------------------------
     % Translate predicted pose to original image

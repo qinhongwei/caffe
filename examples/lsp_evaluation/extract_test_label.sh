@@ -24,4 +24,4 @@ DIM=$8 # fc8-pose
 OUT=$LEVELDB-mat/test_labels_$LAYER_$5.mat
 
 $TOOL/extract_features.bin  $MODEL $PROTOTXT $LAYER $LEVELDB $BATCHNUM GPU 0
-sudo python ../../tools/wyang/leveldb2mat.py $LEVELDB $BATCHNUM  $BATCHSIZE $DIM $OUT 
+python ../../tools/wyang/leveldb2mat.py $LEVELDB $BATCHNUM  $BATCHSIZE $DIM $OUT 
