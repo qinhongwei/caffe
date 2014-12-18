@@ -1,4 +1,6 @@
 This is a version for my won work on deepfish.
+There are also `winmex` branch and `windows` branch by Zhiheng Niu.
+The `master` version is developed by BVLC.
 # Windows Installation
 This is not the original [Caffe Readme](https://github.com/BVLC/caffe/blob/master/README.md) but an installation guide for windows version.
 
