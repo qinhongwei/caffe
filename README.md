@@ -11,7 +11,7 @@ You can download the windows x64 [standalone package](https://dl.dropboxusercont
 You may need the followings to build the code:
 - Windows 64-bit
 - MS Visual Studio 2012
-- CUDA toolkit 6.0
+- CUDA toolkit 6.5
 - Other dependencies which you can directly download from [here](http://dl.dropboxusercontent.com/u/3466743/caffe-vs2012/dependency-20140804.7z).
 
 #### Build Steps
@@ -30,9 +30,13 @@ Currently it can be built by VS2012 for x64 flatform only. This is because the d
 - Double click `get_mnist_leveldb.bat` to download the dataset in leveldb format.
 - Double click `train_lenet.bat` to see the training progress .
 
-#### Known Issues
+#### Tips
 - It takes obvious longer time when you compile for the first time. Therefore please refrain from using `clean & rebuild`.
-- I have trained on ImageNet with this windows porting as well. The speed is much slower than the one built on Ubuntu. 20 iterations take 79s on Windows, whereas same number of iterations take about 30s on Ubuntu (on GTX Titan).
+- To support different [GPU compute capabilities](http://en.wikipedia.org/wiki/CUDA#Supported_GPUs), the code is built for several compute capability versions. If you know the exact version of your GPU device, you may remove the support to other versions to speed up the compiling procedure. You may wish to take a look at #25 for more details.
+
+#### Known Issues
+- ~~I have trained on ImageNet with this windows porting as well. The speed is much slower than the one built on Ubuntu. 20 iterations take 79s on Windows, whereas same number of iterations take about 30s on Ubuntu (on GTX Titan).~~
+- The above issue has been solved since the upgrade of GPU driver to 340.62 and CUDA to 6.5. The same hardware is now running 26 sencods for 20 iterations on Windows. Hooray!!
 
 #### Bug Report
 - Please create new issues in [github](https://github.com/niuzhiheng/caffe/issues) if you find any bug.
