@@ -1,3 +1,4 @@
+This is a version for my won work on deepfish.
 # Windows Installation
 This is not the original [Caffe Readme](https://github.com/BVLC/caffe/blob/master/README.md) but an installation guide for windows version.
 
