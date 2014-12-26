@@ -19,6 +19,11 @@
 
 using std::string;
 
+// the following 3 lines are added because in VS2012 update4, snprintf is wrong
+#if _MSC_VER
+#define snprintf _snprintf
+#endif
+
 const int kCIFARSize = 32;
 const int kCIFARImageNBytes = 3072;
 const int kCIFARBatchSize = 10000;

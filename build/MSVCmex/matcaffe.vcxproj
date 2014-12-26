@@ -49,7 +49,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.0.props" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.5.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -145,7 +145,7 @@ cd %origin_dir%</Command>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>../../3rdparty/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\lib\x64;C:\Program Files\MATLAB\R2014a\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../3rdparty/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.5\lib\x64;C:\Program Files\MATLAB\R2014a\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
       <AdditionalDependencies>leveldbd.lib;libopenblas.lib;cublas.lib;cublas_device.lib;curand.lib;cudart.lib;cuda.lib;libprotobufd.lib;libglog.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);libmat.lib;libmex.lib;libmx.lib</AdditionalDependencies>
       <AdditionalOptions>/export:mexFunction %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -211,6 +211,9 @@ cd %origin_dir%</Command>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -220,7 +223,7 @@ cd %origin_dir%</Command>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>../../3rdparty/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\lib\x64;C:\Program Files\MATLAB\R2014a\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../3rdparty/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.5\lib\x64;C:\Program Files\MATLAB\R2014a\extern\lib\win64\microsoft</AdditionalLibraryDirectories>
       <AdditionalDependencies>libboost_date_time-vc110-mt-s-1_55.lib;shlwapi.lib;leveldb.lib;libopenblas.lib;cublas.lib;cublas_device.lib;curand.lib;cudart.lib;cuda.lib;libprotobuf.lib;libglog.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libmat.lib;libmex.lib;libmx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/export:mexFunction %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -244,6 +247,9 @@ cd ../../
 "./scripts/GeneratePB.bat"
 cd %origin_dir%</Command>
     </PreBuildEvent>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\matlab\caffe\matcaffe.cpp" />
@@ -347,6 +353,6 @@ cd %origin_dir%</Command>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.0.targets" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 6.5.targets" />
   </ImportGroup>
 </Project>
