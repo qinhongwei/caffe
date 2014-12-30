@@ -1,17 +1,33 @@
 addpath(genpath('BUFFY'));
 clc; clear all; close all;
 
-DEBUG = 1;
+DEBUG = 0;
 top_k = 5;
 
 %--------------------------------------------
 % Translate predicted pose to original image
 cropsize = 227;
-caffe_pred = '../lsp_elw/extract_feature/train-14-nov/test_labels.mat';
+caffe_pred = '/home/wyang/github/caffe/examples/lsp_alexnet/extract_features/dec-07-2014-mat/test_labels_fc8_1000.mat';
 load(caffe_pred); % predicted
 load('/home/wyang/Code/PE1.41DBN_human_detector/LSP/cache_test_top5/pos.mat');   % test information
-feats = feats(1:length(pos), :);
+feats1 = feats(1:length(pos), :);
 load '/home/wyang/Code/PE1.41DBN_human_detector/LSP/bbox/lsp_bbox_caffe_0918.mat';  detects = detects(1001:end); % detects bbox
+
+feats2 = feats(1:length(pos), :);
+
+feats3 = zeros(length(pos), 4);
+feats3(:, 1) = feats1(:, 13);
+feats3(:, 2) = feats1(:, 14);
+feats3(:, 3) = feats1(:, 27);
+feats3(:, 4) = feats1(:, 28);
+
+feats1(:, 13) = feats2(:, 1);
+feats1(:, 14) = feats2(:, 2);
+feats1(:, 27) = feats2(:, 3);
+feats1(:, 28) = feats2(:, 4);
+
+feats = feats1;
+
 
 database = '/home/wyang/Datasets/lsp_dataset/';
 imlist = dir([database 'images/*.jpg']);
@@ -59,10 +75,10 @@ for i = 1:length(imlist)
         end
     end   
     
-%     if DEBUG
-%         visualize_pose(im, points{i}', ones(1, 14));
-%         pause; close;
-%     end
+    if DEBUG
+        visualize_pose(im, points{i}', ones(1, 14));
+        pause; close;
+    end
     
     clear cur_points;
     

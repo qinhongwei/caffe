@@ -182,7 +182,7 @@ Layer<Dtype>* GetLayer(const LayerParameter& param) {
   case LayerParameter_LayerType_ACCURACY:
     return new AccuracyLayer<Dtype>(param);
   case LayerParameter_LayerType_ACCURACY_REGRESSION:
-    return new AccuracyRegressionLayer<Dtype>(param);
+    return new AccuracyRegressionLayer<Dtype>(param);  // Accuracy layer for regression
   case LayerParameter_LayerType_ABSVAL:
     return new AbsValLayer<Dtype>(param);
   case LayerParameter_LayerType_ARGMAX:
@@ -253,6 +253,10 @@ Layer<Dtype>* GetLayer(const LayerParameter& param) {
     return GetTanHLayer<Dtype>(name, param);
   case LayerParameter_LayerType_WINDOW_DATA:
     return new WindowDataLayer<Dtype>(param);
+  case LayerParameter_LayerType_CUSTOM_INNER_PRODUCT:   // custom Inner Product Layer
+    return new CustomInnerProductLayer<Dtype>(param);
+  case LayerParameter_LayerType_CUSTOM_EU_LOSS:  // custom Euclidean Loss layer
+    return new CustomEuLossLayer<Dtype>(param);
   case LayerParameter_LayerType_NONE:
     LOG(FATAL) << "Layer " << name << " has unspecified type.";
   default:

@@ -200,6 +200,8 @@ message NetStateRule {
 //
 // LayerParameter next available ID: 41 (last added: contrastive_loss_param)
 // LayerParameter next available ID: 42 (last added: accuracy_regression_param)
+// LayerParameter next available ID: 43 (last added: accuracy_regression_param)
+// LayerParameter next available ID: 44 (last added: custom_eu_loss_param)
 message LayerParameter {
   repeated string bottom = 2; // the name of the bottom blobs
   repeated string top = 3; // the name of the top blobs
@@ -222,6 +224,8 @@ message LayerParameter {
   //
   // LayerType next available ID: 38 (last added: CONTRASTIVE_LOSS)
   // LayerType next available ID: 39 (last added: ACCURACY_REGRESSION)
+  // LayerType next available ID: 40 (last added: CUSTOM_INNER_PRODUCT)
+  // LayerType next available ID: 41 (last added: CUSTOM_EU_LOSS)
   enum LayerType {
     // "NONE" layer type is 0th enum element so that we don't cause confusion
     // by defaulting to an existent LayerType (instead, should usually error if
@@ -229,12 +233,14 @@ message LayerParameter {
     NONE = 0;
     ABSVAL = 35;
     ACCURACY = 1;
-    ACCURACY_REGRESSION = 38;
+    ACCURACY_REGRESSION = 38;  // add by wyang
     ARGMAX = 30;
     BNLL = 2;
     CONCAT = 3;
     CONTRASTIVE_LOSS = 37;
     CONVOLUTION = 4;
+    CUSTOM_EU_LOSS = 40;        // add by wyang
+    CUSTOM_INNER_PRODUCT = 39;  // add by wyang
     DATA = 5;
     DROPOUT = 6;
     DUMMY_DATA = 32;
@@ -294,7 +300,7 @@ message LayerParameter {
   repeated float loss_weight = 35;
 
   optional AccuracyParameter accuracy_param = 27;
-  optional AccuracyRegressionParameter accuracy_regression_param = 41;
+  optional AccuracyRegressionParameter accuracy_regression_param = 41;//---wyang
   optional ArgMaxParameter argmax_param = 23;
   optional ConcatParameter concat_param = 9;
   optional ContrastiveLossParameter contrastive_loss_param = 40;
@@ -311,6 +317,8 @@ message LayerParameter {
   optional InnerProductParameter inner_product_param = 17;
   optional LRNParameter lrn_param = 18;
   optional MemoryDataParameter memory_data_param = 22;
+  optional CustomInnerProductParameter custom_inner_product_param = 42; //---wyang
+  optional CustomEuLossParameter custom_eu_loss_param = 43; //---wyang
   optional MVNParameter mvn_param = 34;
   optional PoolingParameter pooling_param = 19;
   optional PowerParameter power_param = 21;
@@ -552,6 +560,27 @@ message InnerProductParameter {
   optional bool bias_term = 2 [default = true]; // whether to have bias terms
   optional FillerParameter weight_filler = 3; // The filler for the weight
   optional FillerParameter bias_filler = 4; // The filler for the bias
+}
+
+
+// Message that stores parameters used by MutableInnerProductLayer
+message CustomInnerProductParameter {
+  optional uint32 num_output = 1; // The number of outputs for the layer
+  optional bool bias_term = 2 [default = true]; // whether to have bias terms
+  optional FillerParameter weight_filler = 3; // The filler for the weight
+  optional FillerParameter bias_filler = 4; // The filler for the bias
+
+  // The ratio that is multiplied on the global learning rate. If you want to
+  // set the learning ratio for one blob, you need to set it for all blobs.
+  repeated uint32 fixed_point = 5;
+  optional float  fixed_value = 6 [default = 0];
+}
+
+
+// Message that stores parameters used by CUSTOM_EU_LOSS Layer
+message CustomEuLossParameter {
+  repeated uint32 selected_point = 1;
+  optional bool   is_selected = 2 [default = false]; 
 }
 
 // Message that stores parameters used by LRNLayer

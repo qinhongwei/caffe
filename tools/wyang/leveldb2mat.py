@@ -29,6 +29,25 @@ def main(argv):
 
 	#leveldb.DestroyDB(leveldb_name)
 
+def convert(leveldb_name, batch_num, batch_size, dim, output):
+	print "%s" % leveldb_name
+	window_num = batch_num*batch_size;
+
+	start = time.time()
+	if 'db' not in locals().keys():
+		db = leveldb.LevelDB(leveldb_name)
+		datum = feat_helper_pb2.Datum()
+
+	ft = np.zeros((window_num, dim))
+	for im_idx in range(window_num):
+		datum.ParseFromString(db.Get('%d' %(im_idx)))
+		ft[im_idx, :] = datum.float_data
+
+	print 'time 1: %f' %(time.time() - start)
+	sio.savemat(output, {'feats':ft})
+	print 'time 2: %f' %(time.time() - start)
+	print 'done!'
+
 if __name__ == '__main__':
 	import sys
 	main(sys.argv)
