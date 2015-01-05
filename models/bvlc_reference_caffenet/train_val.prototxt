@@ -5,7 +5,7 @@ layers {
   top: "data"
   top: "label"
   data_param {
-    source: "examples/imagenet/ilsvrc12_train_lmdb"
+    source: "/media/cv/30A6F594A6F55AB4/imagenet/ilsvrc12_train_lmdb"
     backend: LMDB
     batch_size: 256
   }
@@ -22,7 +22,7 @@ layers {
   top: "data"
   top: "label"
   data_param {
-    source: "examples/imagenet/ilsvrc12_val_lmdb"
+    source: "/media/cv/30A6F594A6F55AB4/imagenet/ilsvrc12_val_lmdb"
     backend: LMDB
     batch_size: 50
   }
