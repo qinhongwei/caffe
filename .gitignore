@@ -1,5 +1,16 @@
 ## General
 
+# But not these files...
+!feat_helper_pb2.py
+!feat_helper_pb2.pyc
+
+# training LOG file
+*.log
+*.mat
+*.png
+lsp_pose/
+LSP_patch/
+
 # Compiled Object files
 *.slo
 *.lo
