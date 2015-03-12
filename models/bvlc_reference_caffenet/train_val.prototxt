@@ -4,10 +4,6 @@ layer {
   type: "Data"
   top: "data"
   top: "label"
-  data_param {
-    source: "/media/cv/SSD/imagenet/ilsvrc12_train_lmdb"
-    backend: LMDB
-    batch_size: 256
   include {
     phase: TRAIN
   }
@@ -25,7 +21,7 @@ layer {
 #    mirror: true
 #  }
   data_param {
-    source: "examples/imagenet/ilsvrc12_train_lmdb"
+    source: "/media/cv/SSD/imagenet/ilsvrc12_train_lmdb"
     batch_size: 256
     backend: LMDB
   }
@@ -35,10 +31,6 @@ layer {
   type: "Data"
   top: "data"
   top: "label"
-  data_param {
-    source: "/media/cv/SSD/imagenet/ilsvrc12_val_lmdb"
-    backend: LMDB
-    batch_size: 50
   include {
     phase: TEST
   }
@@ -56,7 +48,7 @@ layer {
 #    mirror: true
 #  }
   data_param {
-    source: "examples/imagenet/ilsvrc12_val_lmdb"
+    source: "/media/cv/SSD/imagenet/ilsvrc12_val_lmdb"
     batch_size: 50
     backend: LMDB
   }
