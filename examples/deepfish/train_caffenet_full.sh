@@ -2,13 +2,13 @@
 
 #train with learning rate 0.01
 ./build/tools/caffe train \
-    --solver=models/deepfish_jin/solver_lr1.prototxt \
+    --solver=models/deepfish_jin_new/solver_lr1.prototxt \
     --gpu=2
 
 #train with learning rate 0.001
 ./build/tools/caffe train \
-    --solver=models/deepfish_jin/solver_lr2.prototxt \
-    --snapshot=models/deepfish_jin/caffenet_train_full_iter_600.solverstate \
+    --solver=models/deepfish_jin_new/solver_lr2.prototxt \
+    --snapshot=models/deepfish_jin_new/caffenet_train_full_iter_600.solverstate \
     --gpu=2
 #train with learning rate 0.0001
 #./build/tools/caffe train \
