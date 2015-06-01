@@ -1,4 +1,9 @@
 ## General
+#depth estimation
+examples/depth_estimation/Test134*
+examples/depth_estimation/Train400*
+examples/depth_estimation/test134*
+examples/depth_estimation/train400*
 
 # Compiled Object files
 *.slo
