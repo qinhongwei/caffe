@@ -5,6 +5,10 @@ examples/depth_estimation/Train400*
 examples/depth_estimation/test134*
 examples/depth_estimation/train400*
 
+#SRCNN
+examples/srcnn-caffe/SR-data*
+examples/srcnn-caffe/SR-label*
+
 # Compiled Object files
 *.slo
 *.lo
